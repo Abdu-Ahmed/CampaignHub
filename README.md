@@ -1,3 +1,5 @@
+![project-graph](graph.jpg)
+
 **CampaignHub**
 
 **Table of Contents**

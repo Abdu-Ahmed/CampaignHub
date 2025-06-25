@@ -30,7 +30,7 @@
 
 ## 1. Project Overview
 
-i was researhing and looking online for a project that isn't something basic like a to-do app or a e-comm website, sure these things can be done but the internet is full of them, so i thought hey how can i combine both and more in a single project? (crazy i know)
+i was researching online for a project that isn't something basic like a to-do app or a e-comm website, sure these things can be done but the internet is full of them, so i thought hey how can i combine both and more in a single project? (crazy i know)
 
 and boom :
 

@@ -3,7 +3,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { client } from '../apollo';
-import { GET_ME } from '../graphql/queries';
+import { GET_ME } from '../graphql';
 
 export const AuthContext = createContext({
   token: null,

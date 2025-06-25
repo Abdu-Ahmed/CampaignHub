@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
-import { GET_CAMPAIGN_METRICS } from '../../graphql/queries';
+import { GET_CAMPAIGN_METRICS } from '../../graphql';
 import  LoadingSpinner  from '../UI/LoadingSpinner';
 
 export default function MetricsDashboard() {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useMutation } from '@apollo/client';
-import { UPDATE_CAMPAIGN, GET_CAMPAIGNS } from '../../../graphql/queries';
+import { UPDATE_CAMPAIGN, GET_CAMPAIGNS } from '../../../graphql';
 
 const ErrorDisplay = ({ error }) => {
   if (!error) return null;

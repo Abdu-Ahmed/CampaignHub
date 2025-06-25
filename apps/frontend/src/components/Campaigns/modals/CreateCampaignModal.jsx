@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useMutation, gql } from "@apollo/client";
-import { CREATE_CAMPAIGN, GET_CAMPAIGNS } from "../../../graphql/queries";
+import { CREATE_CAMPAIGN, GET_CAMPAIGNS } from "../../../graphql";
 
 export default function CreateCampaignModal({ open, onClose }) {
   const [title, setTitle] = useState("");

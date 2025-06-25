@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@apollo/client';
-import { GET_CAMPAIGN_DAILY_METRICS } from '../../graphql/queries';
+import { GET_CAMPAIGN_DAILY_METRICS } from '../../graphql';
 import {
   ResponsiveContainer,
   BarChart,

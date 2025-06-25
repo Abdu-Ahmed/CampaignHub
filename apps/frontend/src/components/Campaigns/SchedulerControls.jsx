@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
-import { DISPATCH_SCHEDULED, GET_CAMPAIGNS } from '../../graphql/queries';
+import { DISPATCH_SCHEDULED, GET_CAMPAIGNS } from '../../graphql';
 import GradientButton from '../UI/GradientButton';
 
 export default function SchedulerControls() {

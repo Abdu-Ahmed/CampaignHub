@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
-import { GET_CAMPAIGNS, DELETE_CAMPAIGN, DUPLICATE_CAMPAIGN } from '../../graphql/queries';
+import { GET_CAMPAIGNS, DELETE_CAMPAIGN, DUPLICATE_CAMPAIGN } from '../../graphql';
 import CampaignList from '../Campaigns/CampaignList';
 import CreateCampaignModal from '../Campaigns/modals/CreateCampaignModal';
 import EditCampaignModal from '../Campaigns/modals/EditCampaignModal';

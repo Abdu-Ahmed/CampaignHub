@@ -1,0 +1,133 @@
+input ABConfigInput {
+    variationA: String
+    variationB: String
+    splitA: Int
+    winnerMetric: String
+}
+
+# Root query entrypoints
+type Query {
+    hello: String
+        @guard(with: ["sanctum"])
+        @field(resolver: "App\\GraphQL\\Resolvers\\Hello@resolve")
+
+    campaigns(filter: CampaignFilter): [Campaign!]!
+        @guard(with: ["sanctum"])
+        @field(resolver: "App\\GraphQL\\Resolvers\\Campaign@all")
+
+    campaign(id: ID!): Campaign!
+        @guard(with: ["sanctum"])
+        @field(resolver: "App\\GraphQL\\Resolvers\\Campaign@find")
+
+    campaignMetrics(id: ID!): CampaignMetrics!
+        @guard(with: ["sanctum"])
+        @field(resolver: "App\\GraphQL\\Resolvers\\Campaign@metrics")
+
+    dailyMetrics(campaignId: ID!, from: String!, to: String!): [DailyMetric!]!
+        @guard(with: ["sanctum"])
+        @field(resolver: "App\\GraphQL\\Resolvers\\Analytics@daily")
+
+    me: User!
+        @guard(with: ["sanctum"])
+        @field(resolver: "App\\GraphQL\\Resolvers\\User@me")
+}
+
+# Root mutations for campaigns
+type Mutation {
+    createCampaign(
+        title: String!
+        description: String
+        start_date: String!
+        end_date: String
+        schedule_time: String
+        ab_config: ABConfigInput
+        status: String! # allow the client to set status
+    ): Campaign!
+        @guard(with: ["sanctum"])
+        @field(resolver: "App\\GraphQL\\Resolvers\\Campaign@create")
+
+    updateCampaign(
+        id: ID!
+        title: String
+        description: String
+        start_date: String
+        end_date: String
+        schedule_time: String
+        ab_config: ABConfigInput
+        status: String! # allow the client to set status
+    ): Campaign!
+        @guard(with: ["sanctum"])
+        @field(resolver: "App\\GraphQL\\Resolvers\\Campaign@update")
+
+    deleteCampaign(id: ID!): Boolean!
+        @guard(with: ["sanctum"])
+        @field(resolver: "App\\GraphQL\\Resolvers\\Campaign@delete")
+
+    updateABTestConfig(campaignId: ID!, config: ABConfigInput!): Campaign!
+        @guard(with: ["sanctum"])
+        @field(resolver: "App\\GraphQL\\Resolvers\\Campaign@updateABTest")
+
+    # Duplicate an existing campaign for the current user (always ends up draft)
+    duplicateCampaign(id: ID!): Campaign!
+        @guard(with: ["sanctum"])
+        @field(resolver: "App\\GraphQL\\Resolvers\\Campaign@duplicate")
+
+    # Dispatch due scheduled campaigns and enqueue jobs
+    # Returns the number of campaigns dispatched
+    dispatchScheduledCampaigns: Int!
+        @guard(with: ["sanctum"])
+        @field(resolver: "App\\GraphQL\\Resolvers\\Scheduler@dispatch")
+}
+
+# Filters for campaigns list
+input CampaignFilter {
+    status: String
+    dueBefore: String
+}
+
+# Campaign object type
+type Campaign {
+    id: ID!
+    user_id: ID!
+    title: String!
+    description: String
+    start_date: String!
+    end_date: String
+    schedule_time: String
+    status: String!
+    created_at: String!
+    updated_at: String!
+    ab_config: ABConfig
+}
+
+# Performance metrics for a campaign
+type CampaignMetrics {
+    impressions: Int!
+    clicks: Int!
+    conversions: Int!
+    ctr: Float!
+    conversionRate: Float!
+}
+
+# A/B test settings
+type ABConfig {
+    variationA: String
+    variationB: String
+    splitA: Int
+    winnerMetric: String
+}
+
+type DailyMetric {
+    date: String!
+    impressions: Int!
+    clicks: Int!
+    conversions: Int!
+    ctr: Float!
+    conversionRate: Float!
+}
+
+type User {
+    id: ID!
+    name: String!
+    email: String!
+}

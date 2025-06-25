@@ -1,0 +1,136 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: campaignhub
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  redis:
+    image: redis:6
+    ports:
+      - '6379:6379'
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+
+  gateway:
+    build:
+      context: ../apps/gateway
+      dockerfile: Dockerfile
+    env_file:
+      - ../apps/gateway/.env
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - '8000:80'
+
+  frontend:
+    build:
+      context: ../apps/frontend
+      dockerfile: Dockerfile
+    depends_on:
+      - gateway
+    ports:
+      - '3000:3000'
+
+  auth:
+    build:
+      context: ../services/auth
+      dockerfile: Dockerfile
+    env_file:
+      - ../services/auth/.env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - '8001:80'
+
+  campaign:
+    build:
+      context: ../services/campaign
+      dockerfile: Dockerfile
+    env_file:
+      - ../services/campaign/.env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - '8002:80'
+
+  # SCHEDULER SERVICE - FIXED WITH SINGLE LINE
+  scheduler:
+    build:
+      context: ../services/scheduler
+      dockerfile: Dockerfile
+    env_file:
+      - ../services/scheduler/.env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    ports:
+      - '8003:80'
+    command: ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=80 & while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"]
+
+  # reuse the campaign-worker for campaign jobs
+  campaign-worker:
+    image: infrastructure_campaign
+    env_file:
+      - ../services/campaign/.env
+    depends_on:
+      campaign:
+        condition: service_started
+    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3"]
+
+  # scheduler-worker for scheduler app's queue
+  scheduler-worker:
+    build:
+      context: ../services/scheduler
+      dockerfile: Dockerfile
+    env_file:
+      - ../services/scheduler/.env
+    depends_on:
+      - scheduler
+    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3"]
+
+  metrics:
+    build:
+      context: ../services/metrics
+    env_file:
+      - ../services/metrics/.env
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - '8004:80'
+
+  analytics:
+    build:
+      context: ../services/analytics
+    env_file:
+      - ../services/analytics/.env
+    depends_on:
+      - mysql
+    ports:
+      - "8005:80"
+
+volumes:
+  mysql-data:

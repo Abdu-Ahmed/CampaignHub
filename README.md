@@ -49,7 +49,7 @@ hold on a sec, it doesn't make any sense at first BUT to explain it in layman te
 * **Gateway/API** (GraphQL): BFF layer combining campaign & metrics via GraphQL (Lighthouse).
 * **Frontend**: React + React Router + Apollo Client + Tailwind CSS.
 
-Communication uses HTTP + Bearer tokens. Services run in Docker; shared MySQL for each DB.
+Communication uses HTTP + Bearer tokens. Services run in Docker; shared MySQL for each Service.
 
 ## 3. Backend Microservices
 
